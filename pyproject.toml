@@ -1,0 +1,61 @@
+[project]
+name = "trading-bot"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "uzrama", email = "mark.uzun7@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "aiogram>=3.27.0",
+    "alembic>=1.18.4",
+    "alembic-postgresql-enum>=1.10.0",
+    "asyncpg>=0.31.0",
+    "coloredlogs>=15.0.1",
+    "discord-py-self>=2.1.0",
+    "dishka>=1.9.1",
+    "msgspec>=0.21.1",
+    "pydantic>=2.12.5",
+    "pydantic-settings[yaml]>=2.13.1",
+    "sqlalchemy>=2.0.49",
+    "typer>=0.24.1",
+    "uvloop>=0.22.1",
+]
+
+[project.scripts]
+trading-bot = "trading_bot.presentation.cli.main:app"
+
+[build-system]
+requires = ["uv_build>=0.11.6,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.ruff]
+line-length = 180
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "PL", "RUF"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "src"
+]
+
+[tool.basedpyright]
+reportUnusedCallResult = false
+reportAny = false
+reportExplicitAny = false
+reportUnknownVariableType = false
+reportUnknownParameterType = false
+reportUnknownArgumentType = false
+reportUnknownMemberType = false
+reportMissingTypeStubs = false
+reportUnreachable = false
+reportUntypedFunctionDecorator = false
+reportUntypedBaseClass = false
+reportImplicitStringConcatenation = "none"
+ignore = [
+    "tests",
+    "migrations",
+]
