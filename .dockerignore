@@ -1,0 +1,21 @@
+# Иначе Docker скопирует твое локальное окружение, которое несовместимо с Linux внутри контейнера
+.venv/
+env/
+venv/
+# Кэш Python и линтеров
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.ruff_cache/
+.pytest_cache/
+# Конфиденциальные данные и локальные настройки
+# .env прокидывается через docker-compose (env_file), его НЕЛЬЗЯ "запекать" в сам образ
+.env
+.env.*
+*.local
+# Git и IDE
+.git/
+.gitignore
+.idea/
+.vscode/

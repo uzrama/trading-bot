@@ -1,0 +1,70 @@
+services:
+    db:
+        image: postgres:16-alpine
+        restart: always
+        environment:
+            POSTGRES_USER: ${POSTGRES__USER:-postgres}
+            POSTGRES_PASSWORD: ${POSTGRES__PASSWORD:-postgres}
+            POSTGRES_DB: ${POSTGRES__DB:-trading_bot}
+        ports:
+            - '5433:5432'
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        healthcheck:
+            test:
+                [
+                    'CMD-SHELL',
+                    'pg_isready -U ${POSTGRES__USER:-postgres} -d ${POSTGRES__DB:-trading_bot}',
+                ]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+    redis:
+        image: redis:7-alpine
+        restart: always
+        ports:
+            - '6380:6379'
+        volumes:
+            - redis_data:/data
+    # Service for applying migrations before starting the bots
+    migrator:
+        build: .
+        env_file:
+            - .env
+        environment:
+            - POSTGRES__HOST=db
+        depends_on:
+            db:
+                condition: service_healthy
+        entrypoint: ['uv', 'run', 'alembic', 'upgrade', 'head']
+    # Discord listener
+    discord-listener:
+        build: .
+        restart: unless-stopped
+        env_file:
+            - .env
+        environment:
+            - POSTGRES__HOST=db
+        depends_on:
+            migrator:
+                condition: service_completed_successfully
+            redis:
+                condition: service_started
+        command: ['discord']
+    # WebSockets listener (Bybit)
+    ws-tracker:
+        build: .
+        restart: unless-stopped
+        env_file:
+            - .env
+        environment:
+            - POSTGRES__HOST=db
+        depends_on:
+            migrator:
+                condition: service_completed_successfully
+            redis:
+                condition: service_started
+        command: ['tracker']
+volumes:
+    postgres_data:
+    redis_data:
