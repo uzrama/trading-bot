@@ -1,0 +1,88 @@
+x-default-tp-distributions: &default_tp
+    3:
+        - { level: 1, close_size: 0.5 }
+        - { level: 2, close_size: 0.3 }
+        - { level: 3, close_size: 0.2 }
+    4:
+        - { level: 1, close_size: 0.4 }
+        - { level: 2, close_size: 0.3 }
+        - { level: 3, close_size: 0.2 }
+        - { level: 4, close_size: 0.1 }
+    5:
+        - { level: 1, close_size: 0.3 }
+        - { level: 2, close_size: 0.25 }
+        - { level: 3, close_size: 0.2 }
+        - { level: 4, close_size: 0.15 }
+        - { level: 5, close_size: 0.1 }
+general:
+    mode: production
+discord:
+    sources:
+        - source_name: haseeb
+          enabled: true
+          channel_id: 1445368953965645824
+          accounts:
+              - account: account2
+          leverage: 5
+          default_sl: 0.032
+          tp_distributions: *default_tp
+        - source_name: elite
+          enabled: true
+          channel_id: 1380287683326378175
+          accounts:
+              - account: account2
+          leverage: 5
+          default_sl: 0.032
+          tp_distributions: *default_tp
+        - source_name: andre
+          enabled: true
+          channel_id: 1380287984133472387
+          accounts:
+              - account: account1
+          leverage: 5
+          default_sl: 0.032
+          tp_distributions: *default_tp
+        - source_name: algo
+          enabled: true
+          channel_id: 1385240143639871498
+          accounts:
+              - account: account1
+          leverage: 5
+          default_sl: 0.032
+          tp_distributions: *default_tp
+        # - source_name: algo
+        #   enabled: true
+        #   channel_id: 1466372612040036424
+        #   accounts:
+        #       - account: account1
+        #       - account: account2
+        #       - account: account3
+        #   leverage: 5
+        #   default_sl: 0.032
+        #   tp_distributions: *default_tp
+        # - source_name: voyager
+        #   enabled: true
+        #   channel_id: 1501976155283259522
+        #   accounts:
+        #       - account: account1
+        #       - account: account2
+        #       - account: account3
+        #   leverage: 5
+        #   default_sl: 0.032
+        #   tp_distributions: *default_tp
+accounts:
+    account1:
+        exchange: bybit
+        demo: false
+        position_size: 0.2
+        timeout_seconds: 15
+    account2:
+        exchange: bybit
+        demo: false
+        position_size: 0.2
+        timeout_seconds: 15
+    account3:
+        exchange: bybit
+        demo: true
+        position_size: 0.2
+        timeout_seconds: 15
