@@ -1,0 +1,9 @@
+from typing import Protocol
+
+from trading_bot.core.application.database.dto import PositionDTO
+
+
+class PositionRepositoryProtocol(Protocol):
+    async def upsert(self, position: PositionDTO) -> None: ...
+    async def get_by_id(self, account_name: str, symbol: str) -> PositionDTO | None: ...
+    async def get_active_by_symbol(self, account_name: str, symbol: str) -> PositionDTO | None: ...
