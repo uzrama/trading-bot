@@ -2,12 +2,14 @@ services:
     db:
         image: postgres:16-alpine
         restart: always
+        env_file:
+            - .env
         environment:
             POSTGRES_USER: ${POSTGRES__USER:-postgres}
             POSTGRES_PASSWORD: ${POSTGRES__PASSWORD:-postgres}
             POSTGRES_DB: ${POSTGRES__DB:-trading_bot}
-        ports:
-            - '5433:5432'
+        expose:
+            - '5432'
         volumes:
             - postgres_data:/var/lib/postgresql/data
         healthcheck:
@@ -19,13 +21,11 @@ services:
             interval: 5s
             timeout: 5s
             retries: 5
-    redis:
-        image: redis:7-alpine
-        restart: always
-        ports:
-            - '6380:6379'
-        volumes:
-            - redis_data:/data
+        logging:
+            driver: 'json-file'
+            options:
+                max-size: '10m'
+                max-file: '3'
     # Service for applying migrations before starting the bots
     migrator:
         build: .
@@ -36,7 +36,13 @@ services:
         depends_on:
             db:
                 condition: service_healthy
-        entrypoint: ['uv', 'run', 'alembic', 'upgrade', 'head']
+        # Changed from ['uv', 'run', 'alembic', ...] to direct call
+        entrypoint: ['alembic', 'upgrade', 'head']
+        logging:
+            driver: 'json-file'
+            options:
+                max-size: '10m'
+                max-file: '3'
     # Discord listener
     discord-listener:
         build: .
@@ -49,9 +55,14 @@ services:
             migrator:
                 condition: service_completed_successfully
             redis:
-                condition: service_started
+                condition: service_healthy
         command: ['discord']
-    # WebSockets listener (Bybit)
+        logging:
+            driver: 'json-file'
+            options:
+                max-size: '10m'
+                max-file: '3'
+    # WebSockets listener
     ws-tracker:
         build: .
         restart: unless-stopped
@@ -63,8 +74,12 @@ services:
             migrator:
                 condition: service_completed_successfully
             redis:
-                condition: service_started
+                condition: service_healthy
         command: ['tracker']
+        logging:
+            driver: 'json-file'
+            options:
+                max-size: '10m'
+                max-file: '3'
 volumes:
     postgres_data:
-    redis_data:
