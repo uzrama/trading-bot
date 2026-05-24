@@ -47,7 +47,7 @@ class SQLAlchemyPositionRepository(PositionRepositoryProtocol):
 
     @override
     async def get_active_by_symbol(self, account_name: str, symbol: str) -> PositionDTO | None:
-        stmt = select(PositionModel).where(PositionModel.account_name == account_name, PositionModel.symbol == symbol, PositionModel.is_closed == False)
+        stmt = select(PositionModel).where(PositionModel.account_name == account_name, PositionModel.symbol == symbol, PositionModel.is_closed == False).with_for_update()
         result = await self._session.execute(stmt)
         model = result.scalar_one_or_none()
         return self._to_dto(model) if model else None

@@ -36,7 +36,7 @@ class TakeProfitUseCase:
         async with uow:
             tps_db = await uow.orders.get_takeprofits_by_signal(account_name=event.account_name, message_id=tp_order_db.message_id)
 
-        tp_vos = [TakeProfit(price=tp.price, level=tp.level) for tp in (tps_db or []) if tp.price and tp.level]
+        tp_vos = [TakeProfit(price=tp.price or tp.trigger_price, level=tp.level) for tp in (tps_db or []) if (tp.price or tp.trigger_price) and tp.level]
         # 2. DTO -> Entity mapping
         position_entity = position_dto.to_entity(take_profits=tp_vos)
 

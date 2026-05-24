@@ -43,7 +43,7 @@ class FilledUseCase:
             # 3. Find attached Take Profits
             tps_db = await uow.orders.get_takeprofits_by_signal(account_name=event.account_name, message_id=entry_order_db.message_id)
             # Map DTOs from DB to Value Objects for Domain
-            tp_vos = [TakeProfit(price=tp.price, level=tp.level) for tp in (tps_db or []) if tp.price and tp.level]
+            tp_vos = [TakeProfit(price=tp.price or tp.trigger_price, level=tp.level) for tp in (tps_db or []) if (tp.price or tp.trigger_price) and tp.level]
             # 4. Create a new Position entity
             actual_entry_price = order.price or order.trigger_price or 0
             new_position = Position(
